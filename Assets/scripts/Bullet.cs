@@ -10,7 +10,7 @@ public class Bullet : MonoBehaviour {
 	public static int playerDirectionState;
 	// Use this for initialization
 	void Start () {
-	
+
 	}
 	
 	// Update is called once per frame

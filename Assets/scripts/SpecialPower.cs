@@ -8,6 +8,7 @@ public class SpecialPower : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		rect = GetComponent<RectTransform> ();
+		point = 0;
 	}
 	
 	// Update is called once per frame

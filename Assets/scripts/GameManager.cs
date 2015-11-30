@@ -2,16 +2,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using System.IO;
+using System;
+
+
 public class GameManager : MonoBehaviour {
+	public static int starAchievment;
+	int totalMove;
+	public static int nextLevel;
 	//prefab
 	public GameObject tilePrefab;
 	public GameObject playerPrefab;
 	public GameObject bulletPrefab;
 	public GameObject obstaclePrefab;
 	public GameObject enemyPrefab;
+	public int levelStartIndex = 4;
+	//leveling
+	public Leveling leveling;
 	//size
-	public int mapSize = 15;
-	public int totalEnemy = 3;
+	public int mapSize;
 	//player
 	Player player;
 	GameObject [] objBullets = new GameObject[8];
@@ -26,10 +35,13 @@ public class GameManager : MonoBehaviour {
 	List<Enemy> enemies = new List<Enemy>();
 	// Use this for initialization
 	void Start ()	 {
-
+		leveling = new Leveling ();
+		totalMove = 0;
+		starAchievment = 0;
+		nextLevel = Application.loadedLevel + 1;
 		generateMap ();
 		generateObstacle ();
-		generateEnemy (totalEnemy);
+		generateEnemy ();
 		generatePlayer ();
 	}
 	
@@ -38,9 +50,38 @@ public class GameManager : MonoBehaviour {
 		movePlayer ();
 		moveBullet ();
 		animateEnemy ();
-
+		checkWinner ();
 	}
-	
+
+	void checkWinner(){
+		if (player == null) {
+			Application.LoadLevel(3);
+			Bullet.isMove = false;
+			Enemy.isMove = false;
+		} else {
+			bool isLife = false;
+			for(int i = 0; i<enemies.Count;i++){
+				if(enemies[i]!=null){
+					isLife = true;
+				}
+			}
+			if(!isLife){
+				if(leveling.minStep[Application.loadedLevel-levelStartIndex]-totalMove < 0){
+					starAchievment = 2;
+				} else if(leveling.minStep[Application.loadedLevel-levelStartIndex]-totalMove < -5){
+					starAchievment = 1;
+				} else {
+					starAchievment = 3;
+				}
+				writeData ();
+				Application.LoadLevel(2);
+				Bullet.isMove = false;
+				Enemy.isMove = false;
+			}
+		}
+	}
+
+
 	void generateMap(){
 		map = new  List<List<Tile>> ();	
 		for (int i = 0; i<mapSize; i++) {
@@ -62,12 +103,15 @@ public class GameManager : MonoBehaviour {
 		bool isCreate = false;
 		int x = 0;
 		int y = 0;
+		/*
 		while (!isCreate) {
 			x = Random.Range (0, mapSize);
 			y = Random.Range (0, mapSize);
 			if(map[y][x].getType() == 0)
 				isCreate = true;
-		}
+		}*/
+		x = leveling.player [Application.loadedLevel-levelStartIndex].x;
+		y = leveling.player [Application.loadedLevel-levelStartIndex].x;
 		player = ((GameObject)(Instantiate (playerPrefab, new Vector3 (y - Mathf.Floor (mapSize / 2), 0.75f, -x + Mathf.Floor (mapSize / 2)), Quaternion.Euler (new Vector3 (90, 0, 0))))).GetComponent<Player> ();
 		Player.x = x;
 		Player.y = y;
@@ -77,7 +121,7 @@ public class GameManager : MonoBehaviour {
 	}
 	
 	void generateObstacle(){
-		int totalObstacle = Random.Range (3,8);
+		/*int totalObstacle = Random.Range (3,8);
 		for (int i = 0; i<totalObstacle; i++) {
 			int x = Random.Range (0, mapSize);
 			int y = Random.Range (0, mapSize);
@@ -88,11 +132,19 @@ public class GameManager : MonoBehaviour {
 			} else {
 				i--;
 			}
+		}*/
+		Debug.Log (leveling.obstacle.Count);
+		for (int i = 0; i<leveling.obstacle[Application.loadedLevel-levelStartIndex].Count; i++) {
+			int x = leveling.obstacle[Application.loadedLevel-levelStartIndex][i].x;
+			int y = leveling.obstacle[Application.loadedLevel-levelStartIndex][i].y;
+			Obstacle tmp = ((GameObject)(Instantiate(obstaclePrefab, new Vector3((float)y-Mathf.Floor(mapSize/2),0,(float)-x+Mathf.Floor(mapSize/2)), Quaternion.Euler(new Vector3())))).GetComponent<Obstacle>();
+			obstacles.Add(tmp);
+			map[y][x].setType(3);
 		}
 	}
 
-	void generateEnemy(int totalEnemies){
-		for (int i = 0; i<totalEnemies; i++) {
+	void generateEnemy(){
+		/*for (int i = 0; i<totalEnemies; i++) {
 			int x = Random.Range (0, mapSize);
 			int y = Random.Range (0, mapSize);
 			if(map[y][x].getType() == 0){
@@ -105,6 +157,16 @@ public class GameManager : MonoBehaviour {
 			} else {
 				i--;
 			}
+		}*/
+		for (int i = 0; i<leveling.enemy[Application.loadedLevel-levelStartIndex].Count; i++) {
+			int x = leveling.enemy[Application.loadedLevel-levelStartIndex][i].x;
+			int y = leveling.enemy[Application.loadedLevel-levelStartIndex][i].y;
+			Enemy tmp = ((GameObject)(Instantiate(enemyPrefab, new Vector3((float)y-Mathf.Floor(mapSize/2),0.75f,(float)-x+Mathf.Floor(mapSize/2)), Quaternion.Euler(new Vector3(90,0,0))))).GetComponent<Enemy>();
+			tmp.x = x;
+			tmp.y = y;
+			tmp.direction = 0;
+			enemies.Add (tmp);
+			map[y][x].setType(2);
 		}
 	}
 
@@ -115,6 +177,7 @@ public class GameManager : MonoBehaviour {
 				player.transform.position = Vector3.SmoothDamp (player.transform.position, Player.dest, ref v, 0.1f);
 				if(Vector3.Distance(player.transform.position, Player.dest) < 0.1f){
 					Player.isMove = false;
+					totalMove++;
 					Enemy.isMove = true;
 					moveEnemy();
 				}
@@ -123,7 +186,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void moveEnemy(){
-		for (int i = 0; i<totalEnemy; i++) {
+		for (int i = 0; i<leveling.enemy[Application.loadedLevel-levelStartIndex].Count; i++) {
 			if (enemies [i] != null) {
 				int[] tmp = enemies [i].move ();
 				//determining direction
@@ -175,7 +238,7 @@ public class GameManager : MonoBehaviour {
 	public void animateEnemy(){
 		if (Enemy.isMove) {
 			bool isMoving = false;
-			for(int i = 0 ; i<totalEnemy;i++){
+			for(int i = 0 ; i<leveling.enemy[Application.loadedLevel-levelStartIndex].Count;i++){
 				if(enemies[i]!=null){
 					Vector3 v = Vector3.zero;
 					enemies[i].transform.position = Vector3.SmoothDamp (enemies[i].transform.position, new Vector3(enemies[i].y-Mathf.Floor(mapSize/2),0.75f,-enemies[i].x+Mathf.Floor(mapSize/2)), ref v, 0.1f);
@@ -212,7 +275,7 @@ public class GameManager : MonoBehaviour {
 				objBullets[i] = temp;
 				bullets[i] = objBullets[i].GetComponent<Bullet> ();
 			}
-
+			totalMove++;
 			Bullet.isMove = true;
 			setupBulletDirection (2f, false);
 			moveBullet ();
@@ -245,11 +308,37 @@ public class GameManager : MonoBehaviour {
 			//bullet1 = objBullet1.GetComponent<Bullet> ();
 			//objBullet2 = ((GameObject)(Instantiate (bulletPrefab, player.transform.position, Quaternion.Euler (new Vector3 ()))));
 			//bullet2 = objBullet2.GetComponent<Bullet> ();
-			for(int i = 0; i<8;i++){
+			/*for(int i = 0; i<8;i++){
 				GameObject temp = ((GameObject)(Instantiate (bulletPrefab, player.transform.position, Quaternion.Euler (new Vector3 ()))));
 				objBullets[i] = temp;
 				bullets[i] = objBullets[i].GetComponent<Bullet> ();
-			}
+			}*/
+			float diff = 3f;
+			GameObject temp = ((GameObject)(Instantiate (bulletPrefab, new Vector3(player.transform.position.x-diff, player.transform.position.y, player.transform.position.z), Quaternion.Euler (new Vector3 ()))));
+			objBullets[0] = temp;
+			bullets[0] = objBullets[0].GetComponent<Bullet> ();
+			temp = ((GameObject)(Instantiate (bulletPrefab, new Vector3(player.transform.position.x-diff, player.transform.position.y, player.transform.position.z+diff), Quaternion.Euler (new Vector3 ()))));
+			objBullets[1] = temp;
+			bullets[1] = objBullets[1].GetComponent<Bullet> ();
+			temp = ((GameObject)(Instantiate (bulletPrefab, new Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z+diff), Quaternion.Euler (new Vector3 ()))));
+			objBullets[2] = temp;
+			bullets[2] = objBullets[2].GetComponent<Bullet> ();
+			temp = ((GameObject)(Instantiate (bulletPrefab, new Vector3(player.transform.position.x+diff, player.transform.position.y, player.transform.position.z+diff), Quaternion.Euler (new Vector3 ()))));
+			objBullets[3] = temp;
+			bullets[3] = objBullets[3].GetComponent<Bullet> ();
+			temp = ((GameObject)(Instantiate (bulletPrefab, new Vector3(player.transform.position.x+diff, player.transform.position.y, player.transform.position.z), Quaternion.Euler (new Vector3 ()))));
+			objBullets[4] = temp;
+			bullets[4] = objBullets[4].GetComponent<Bullet> ();
+			temp = ((GameObject)(Instantiate (bulletPrefab, new Vector3(player.transform.position.x+diff, player.transform.position.y, player.transform.position.z-diff), Quaternion.Euler (new Vector3 ()))));
+			objBullets[5] = temp;
+			bullets[5] = objBullets[5].GetComponent<Bullet> ();
+			temp = ((GameObject)(Instantiate (bulletPrefab, new Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z-diff), Quaternion.Euler (new Vector3 ()))));
+			objBullets[6] = temp;
+			bullets[6] = objBullets[6].GetComponent<Bullet> ();
+			temp = ((GameObject)(Instantiate (bulletPrefab, new Vector3(player.transform.position.x-diff, player.transform.position.y, player.transform.position.z-diff), Quaternion.Euler (new Vector3 ()))));
+			objBullets[7] = temp;
+			bullets[7] = objBullets[7].GetComponent<Bullet> ();
+
 			Bullet.isMove = true;
 			setupBulletDirection (2f, true);
 			moveBullet ();
@@ -257,6 +346,7 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 	public void moveBullet(){
+		Debug.Log (Bullet.isMove);
 		if (Bullet.isMove) {
 			Vector3 v = Vector3.zero;
 			bool isMove = false;
@@ -312,4 +402,33 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
+	public void writeData(){
+		Debug.Log (Application.persistentDataPath + "/Pirate.sv");
+		FileStream fs = new FileStream (Application.persistentDataPath+"/Pirate.sv",
+		                                FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+		try{
+
+			StreamReader reader = new StreamReader (fs);
+			string x = reader.ReadLine();
+			char[] delimiter = {','};
+			if(x == null) throw new FileNotFoundException();
+			string[] splits = x.Split(delimiter);
+			if(Int32.Parse(splits[Application.loadedLevel-levelStartIndex]) >= starAchievment){
+				return;
+			}
+			reader.Close();
+			fs.Close();
+			FileStream fs2 = System.IO.File.Create(Application.persistentDataPath+"/Pirate.sv");
+			StreamWriter writer = new StreamWriter(fs2);
+			splits[Application.loadedLevel-levelStartIndex] = ""+starAchievment;
+			writer.WriteLine(splits[0]+","+splits[1]+","+splits[2]);
+			writer.Close();
+		} catch(FileNotFoundException f){
+			string[] splits = {"0","0","0"};
+			StreamWriter writer = new StreamWriter(fs);
+			splits[Application.loadedLevel-levelStartIndex] = ""+starAchievment;
+			writer.WriteLine(splits[0]+","+splits[1]+","+splits[2]);
+			writer.Close ();
+		}
+	}
 }
