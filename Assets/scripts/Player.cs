@@ -8,17 +8,14 @@ public class Player : MonoBehaviour {
 	public static int x;
 	public static int y;
 	public static int direction;
+	public GameObject explode;
 	public GameManager gm;
 	// Use this for initialization
 	void Start () {
 		isMove = false;
 		isShoot = false;
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+
 
 	void OnMouseDown(){
 		gm.shoot ();
@@ -27,7 +24,13 @@ public class Player : MonoBehaviour {
 	void OnTriggerEnter(Collider other)
 	{
 		if (other.CompareTag ("Enemy")) {
+			Vector3 v = transform.position;
+			v.y = 0.5f;
 			Destroy (other.gameObject);
+			if(!isMove){
+				Instantiate(explode, v, Quaternion.Euler(new Vector3()));
+			}
+			Destroy (this.gameObject);
 		}
 	}
 }

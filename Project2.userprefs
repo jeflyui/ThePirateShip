@@ -1,21 +1,19 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\scripts\Leveling.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\scripts\GameManager.cs">
     <Files>
-      <File FileName="Assets\scripts\GameManager.cs" Line="78" Column="27" />
-      <File FileName="Assets\scripts\Tile.cs" Line="1" Column="1" />
-      <File FileName="Assets\scripts\Obstacle.cs" Line="1" Column="1" />
-      <File FileName="Assets\scripts\Enemy.cs" Line="1" Column="1" />
-      <File FileName="Assets\scripts\Player.cs" Line="1" Column="1" />
-      <File FileName="Assets\scripts\Bullet.cs" Line="1" Column="1" />
-      <File FileName="Assets\scripts\SpecialButton.cs" Line="1" Column="1" />
-      <File FileName="Assets\scripts\SpecialPower.cs" Line="1" Column="1" />
-      <File FileName="Assets\scripts\Point.cs" Line="1" Column="1" />
-      <File FileName="Assets\scripts\LevelSelection.cs" Line="1" Column="1" />
-      <File FileName="Assets\scripts\Star.cs" Line="1" Column="1" />
-      <File FileName="Assets\scripts\ButtonListener.cs" Line="23" Column="27" />
+      <File FileName="Assets\scripts\GameManager.cs" Line="460" Column="54" />
+      <File FileName="Assets\scripts\ButtonListener.cs" Line="1" Column="1" />
       <File FileName="Assets\scripts\GenerateWinStar.cs" Line="1" Column="1" />
-      <File FileName="Assets\scripts\Leveling.cs" Line="50" Column="17" />
+      <File FileName="Assets\scripts\SpecialPower.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\Player.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\Enemy.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\LevelSelection.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\Point.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\Obstacle.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\Tile.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\Bullet.cs" Line="1" Column="1" />
+      <File FileName="Assets\scripts\Leveling.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

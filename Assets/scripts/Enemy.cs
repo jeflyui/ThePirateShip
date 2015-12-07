@@ -6,9 +6,12 @@ public class Enemy : MonoBehaviour {
 	public int y;
 	public static bool isMove;
 	public int direction;
+	public GameObject explode;
+	public AudioSource[] audios;
 	// Use this for initialization
 	void Start () {
 		isMove = false;
+		audios = GetComponents<AudioSource> ();
 	}
 	
 	// Update is called once per frame
@@ -17,8 +20,6 @@ public class Enemy : MonoBehaviour {
 	}
 
 	public int[] move() {
-		Debug.Log ("before : " + this.x + " " + this.y);
-		Debug.Log ("Player : " + Player.x + " " + Player.y);
 		int diffX = 0, diffY = 0;
 		if (Player.x - this.x > 0) {
 			diffX = 1;
@@ -41,14 +42,22 @@ public class Enemy : MonoBehaviour {
 
 	void OnTriggerEnter(Collider other)
 	{
+		Vector3 v = transform.position;
+		v.y = 0.5f;
 		if (other.CompareTag ("Bullet")) {
 			Destroy (other.gameObject);
+			Instantiate(explode, v, Quaternion.Euler(new Vector3()));
 		} else if (other.CompareTag ("Player")) {
 			Destroy (other.gameObject);
+			if(!isMove){
+				Instantiate(explode, v, Quaternion.Euler(new Vector3()));
+			}
 		} else if (other.CompareTag ("Enemy")) {
-			Debug.Log ("coll");
 			Destroy (other.gameObject);
-			Destroy (this);
+			Destroy (this.gameObject);
+			Instantiate(explode, v, Quaternion.Euler(new Vector3()));
 		}
+		Debug.Log("asd");
+
 	}
 }

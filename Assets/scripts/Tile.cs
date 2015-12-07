@@ -26,18 +26,6 @@ public class Tile : MonoBehaviour {
 		
 	}
 	
-	void OnMouseEnter(){
-		int deltaX = Mathf.Abs (x - Player.x);
-		int deltaY = Mathf.Abs (y - Player.y);
-		if ((deltaX == 1 && deltaY == 1) || (deltaX == 1 && deltaY == 0) || (deltaX == 0 && deltaY == 1)) {
-			changeColor (Color.green);
-		} else if (deltaX == 0 && deltaY == 0) {
-
-		} else {
-			changeColor(Color.red);
-		}
-	}
-	
 	void OnMouseExit(){
 		changeColor(Color.blue);
 	}
@@ -45,42 +33,108 @@ public class Tile : MonoBehaviour {
 	void OnMouseDown(){
 		int deltaX = Mathf.Abs (x - Player.x);
 		int deltaY = Mathf.Abs (y - Player.y);
-		if ((deltaX == 1 && deltaY == 1) || (deltaX == 1 && deltaY == 0) || (deltaX == 0 && deltaY == 1)) {
+		if ((deltaX == 1 && deltaY == 1) || (deltaX == 1 && deltaY == 0) || (deltaX == 0 && deltaY == 1) && !Player.isMove && gm.player !=null && type!=3) {
 			Player.dest = transform.position;
-			Player.dest.y = 0.75f;
+			Player.dest.y = 1.05f;
 			Player.isMove = true;
 			//Direction
 			if (this.x == Player.x && this.y < Player.y) {
 				//moveLeft
-				gm.rotatePlayer (-90);
+				gm.rotatePlayer (180);
+				if(!GameManager.isDefault){
+					GameManager.cameraDest = gm.camera.transform.position;
+					GameManager.cameraDest.x = gm.camera.transform.position.x - 1f;
+				} else {
+					GameManager.cameraDest.x = GameManager.cameraDest.x -1f;
+				}
+
 				Player.direction = 6;
 			} else if (this.x == Player.x && this.y > Player.y) {
 				//moveRight
-				gm.rotatePlayer (90);
+				gm.rotatePlayer (0);
+				if(!GameManager.isDefault){
+					GameManager.cameraDest = gm.camera.transform.position;
+					GameManager.cameraDest.x = gm.camera.transform.position.x + 1f;
+				} else {
+					GameManager.cameraDest.x = GameManager.cameraDest.x +1f;
+				}
+
+
 				Player.direction = 2;
 			} else if (this.x < Player.x && this.y == Player.y) {
 				//moveUp
-				gm.rotatePlayer (180);
+				gm.rotatePlayer (-90);
+				if(!GameManager.isDefault){
+					GameManager.cameraDest = gm.camera.transform.position;
+					GameManager.cameraDest.z = gm.camera.transform.position.z + 1f;
+				} else {
+					GameManager.cameraDest.z = GameManager.cameraDest.x +1f;
+				}
+
+				
 				Player.direction = 0;
 			} else if (this.x > Player.x && this.y == Player.y) {
 				//moveDown
-				gm.rotatePlayer (0);
+				gm.rotatePlayer (90);
+				if(!GameManager.isDefault){
+					GameManager.cameraDest = gm.camera.transform.position;
+					GameManager.cameraDest.z = gm.camera.transform.position.z - 1f;
+				}else{
+					GameManager.cameraDest.z = GameManager.cameraDest.z -1f;
+				}
+
 				Player.direction = 4;
 			} else if (this.x < Player.x && this.y < Player.y) {
 				//moveUpLeft
 				gm.rotatePlayer (-135);
+				if(!GameManager.isDefault){
+					GameManager.cameraDest = gm.camera.transform.position;
+					GameManager.cameraDest.x = gm.camera.transform.position.x - 1f;
+					GameManager.cameraDest.z = gm.camera.transform.position.z + 1f;
+				} else {
+					GameManager.cameraDest.x = GameManager.cameraDest.x -1f;
+					GameManager.cameraDest.z = GameManager.cameraDest.z +1f;
+				}
+
 				Player.direction = 7;
 			} else if (this.x < Player.x && this.y > Player.y) {
 				//moveUpRight
-				gm.rotatePlayer (135);
+				if(!GameManager.isDefault){
+					GameManager.cameraDest = gm.camera.transform.position;
+					GameManager.cameraDest.x = gm.camera.transform.position.x + 1f;
+					GameManager.cameraDest.z = gm.camera.transform.position.z + 1f;
+				}else {
+					GameManager.cameraDest.x = GameManager.cameraDest.x +1f;
+					GameManager.cameraDest.z = GameManager.cameraDest.z +1f;
+				}
+
+				gm.rotatePlayer (-45);
 				Player.direction = 1;
 			} else if (this.x > Player.x && this.y < Player.y) {
 				//moveBottomLeft
-				gm.rotatePlayer (-45);
+				gm.rotatePlayer (135);
+				if(!GameManager.isDefault){
+					GameManager.cameraDest = gm.camera.transform.position;
+					GameManager.cameraDest.x = gm.camera.transform.position.x - 1f;
+					GameManager.cameraDest.z = gm.camera.transform.position.z - 1f;
+				} else {
+					GameManager.cameraDest.x = GameManager.cameraDest.x -1f;
+					GameManager.cameraDest.z = GameManager.cameraDest.z -1f;
+				}
+
 				Player.direction = 5;
 			} else if (this.x > Player.x && this.y > Player.y) {
 				//moveBottomRight
 				gm.rotatePlayer (45);
+				if(!GameManager.isDefault){
+					GameManager.cameraDest = gm.camera.transform.position;
+					GameManager.cameraDest.x = gm.camera.transform.position.x + 1f;
+					GameManager.cameraDest.z = gm.camera.transform.position.z - 1f;
+				} else {
+					GameManager.cameraDest.x = GameManager.cameraDest.x +1f;
+					GameManager.cameraDest.z = GameManager.cameraDest.z -1f;
+				}
+
 				Player.direction = 3;
 			}
 			Player.x = x;
@@ -89,6 +143,7 @@ public class Tile : MonoBehaviour {
 			if(SpecialPower.point < 5){
 				SpecialPower.point +=1;
 			}
+
 		} else if (deltaX == 0 && deltaY == 0) {
 			gm.shoot();
 		}

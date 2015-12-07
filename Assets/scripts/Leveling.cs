@@ -17,8 +17,22 @@ public class Leveling {
 		obstacle.Add (obstacleLVL1);
 		minStep.Add (2);
 
-
 		//level2
+		player.Add (new Point (7,8));
+		enemyLVL1 = new List<Point> ();
+		enemyLVL1.Add (new Point(5, 8));
+        enemyLVL1.Add(new Point(5, 9));
+        enemyLVL1.Add(new Point(11, 5));
+		enemy.Add (enemyLVL1);
+		obstacleLVL1 = new List<Point> ();
+		obstacleLVL1.Add (new Point(5,5));
+		obstacleLVL1.Add (new Point(8,6));
+	    obstacleLVL1.Add (new Point(5,7));
+		obstacleLVL1.Add (new Point(7,9));
+		obstacle.Add (obstacleLVL1);
+		minStep.Add (3);
+
+		//level3
 		player.Add (new Point (7,8));
 		enemyLVL1 = new List<Point> ();
 		enemyLVL1.Add (new Point(5, 5));
@@ -35,8 +49,25 @@ public class Leveling {
 		obstacle.Add (obstacleLVL1);
 
 		minStep.Add (2);
+        
+		//level4
+		player.Add (new Point (11, 4));
+		enemyLVL1 = new List<Point> ();
+		enemyLVL1.Add (new Point (13,11));
+		enemyLVL1.Add (new Point (14,9));
+		enemyLVL1.Add (new Point (7,9));
+		enemyLVL1.Add (new Point (12,6));
+		enemy.Add (enemyLVL1);
 
-		//level3
+		obstacleLVL1 = new List<Point> ();
+		obstacleLVL1.Add (new Point(12,11));
+		obstacleLVL1.Add (new Point(11,12));
+		obstacleLVL1.Add (new Point(9,8));
+		obstacle.Add (obstacleLVL1);
+
+		minStep.Add (5);
+        
+		//level6
 		player.Add (new Point (7,8));
 		enemyLVL1 = new List<Point> ();
 		//enemyLVL1.Add(new Point(0,0));
